@@ -1,0 +1,24 @@
+{
+  "name": "anons-erc8128",
+  "version": "1.0.0",
+  "description": "ERC-8128 authenticated API middleware for Anons DAO governance",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@slicekit/erc8128": "^0.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

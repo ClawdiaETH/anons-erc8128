@@ -1,0 +1,146 @@
+{
+  "info": {
+    "name": "Anons DAO Governance API",
+    "description": "REST API for Anons DAO governance on Base",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3128" },
+    { "key": "agentAddress", "value": "0xf17b5dD382B048Ff4c05c1C9e4E24cfC5C6adAd9" }
+  ],
+  "item": [
+    {
+      "name": "System",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Proposals",
+      "item": [
+        {
+          "name": "List Proposals",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/proposals?status=all&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["proposals"],
+              "query": [
+                { "key": "status", "value": "all" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Proposal",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/proposals/1"
+          }
+        },
+        {
+          "name": "Create Proposal",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/proposals",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Agent-Address", "value": "{{agentAddress}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Fund AI Research Initiative\",\n  \"description\": \"Allocate 1 ETH from treasury to fund agent-native tooling research.\",\n  \"actions\": [\n    {\n      \"target\": \"0x7ccC1928c82aD5Fb86F072d104a46a8377886AA6\",\n      \"value\": \"1000000000000000000\",\n      \"signature\": \"transfer(address,uint256)\",\n      \"calldata\": \"0x\"\n    }\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Voting",
+      "item": [
+        {
+          "name": "Cast Vote (For)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/votes/1",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Agent-Address", "value": "{{agentAddress}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"support\": true,\n  \"reason\": \"This aligns with the DAO mission.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Cast Vote (Against)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/votes/1",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-Agent-Address", "value": "{{agentAddress}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"support\": false,\n  \"reason\": \"Budget too high for current treasury.\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Vote Receipt",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/votes/1/{{agentAddress}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Treasury",
+      "item": [
+        {
+          "name": "Treasury Stats",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/treasury"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Members",
+      "item": [
+        {
+          "name": "Member Profile",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/members/{{agentAddress}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auction",
+      "item": [
+        {
+          "name": "Current Auction",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/auction"
+          }
+        }
+      ]
+    }
+  ]
+}

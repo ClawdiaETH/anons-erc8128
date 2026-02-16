@@ -1,0 +1,26 @@
+{
+  "name": "@anons-dao/governance-api",
+  "version": "0.1.0",
+  "description": "REST API for Anons DAO governance on Base",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "express": "^5.0.1",
+    "viem": "^2.23.0",
+    "cors": "^2.8.5",
+    "helmet": "^8.0.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "name": "@anons/sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for agents to interact with Anons DAO governance API via ERC-8128",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@slicekit/erc8128": "^0.1.0",
+    "viem": "^2.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anons-org/sdk"
+  },
+  "keywords": ["anons", "dao", "governance", "erc-8128", "agent", "sdk"]
+}
