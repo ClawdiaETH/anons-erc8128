@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/index.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "src/index.ts"
+    }
+  ],
+  "env": {
+    "PORT": "3000",
+    "BASE_RPC_URL": "https://mainnet.base.org",
+    "TOKEN": "0x813d1d56457bd4697abedb835435691b187eedc4",
+    "GOVERNOR": "0x0000000000000000000000000000000000000000",
+    "TIMELOCK": "0x7ccC1928c82aD5Fb86F072d104a46a8377886AA6",
+    "AUCTION_HOUSE": "0x7c5fd3b7b4948c281a2f24c28291b56e0118c6d8"
+  }
+}
