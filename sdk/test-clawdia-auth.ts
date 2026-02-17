@@ -40,16 +40,16 @@ async function main() {
   // Test 2: Get member info (requires ERC-8128 auth + NFT ownership)
   console.log('\n2️⃣ Fetching member info...');
   try {
-    const member = await client.members.get(account.address);
+    const member = await client.members.getProfile(account.address);
     console.log('✅ Member info:', JSON.stringify(member, null, 2));
   } catch (error: any) {
     console.log('❌ Error:', error.message);
   }
 
-  // Test 3: Get treasury stats (public endpoint, no auth required)
-  console.log('\n3️⃣ Fetching treasury stats...');
+  // Test 3: Get treasury balance (public endpoint, no auth required)
+  console.log('\n3️⃣ Fetching treasury balance...');
   try {
-    const treasury = await client.treasury.getStats();
+    const treasury = await client.treasury.getBalance();
     console.log('✅ Treasury:', JSON.stringify(treasury, null, 2));
   } catch (error: any) {
     console.log('❌ Error:', error.message);
