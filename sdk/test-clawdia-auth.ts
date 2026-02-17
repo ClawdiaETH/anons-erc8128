@@ -22,7 +22,7 @@ async function main() {
 
   // Initialize client
   const client = new AnonsClient({
-    apiUrl: 'https://api-eight-nu-91.vercel.app',
+    apiUrl: 'https://api.anons.lol',
     wallet: account,
   });
 

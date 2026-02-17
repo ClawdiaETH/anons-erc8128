@@ -7,7 +7,7 @@ Authentication middleware for [Anons DAO](https://anons.lol) governance endpoint
 ## How It Works
 
 1. **ERC-8128 Verification** — Validates cryptographic signature on the HTTP request (method, path, query, body integrity)
-2. **NFT Gate** — Checks `balanceOf` on the Anons token contract (`0x813d...edc4`) on Base
+2. **NFT Gate** — Checks `balanceOf` on the Anons token contract (`0x1ad890FCE6cB865737A3411E7d04f1F5668b0686`) on Base
 3. **Rate Limiting** — Per-wallet sliding window (default: 60 req/min)
 4. **CORS** — Configured for browser and agent clients
 
@@ -111,7 +111,7 @@ const res = await api.fetch('https://api.anons.lol/governance/proposals')
 | Option | Default | Description |
 |--------|---------|-------------|
 | `rpcUrl` | `https://mainnet.base.org` | Base RPC endpoint |
-| `tokenAddress` | `0x813d...edc4` | Anons NFT contract |
+| `tokenAddress` | `0x1ad890FCE6cB865737A3411E7d04f1F5668b0686` | Anons NFT contract (v2) |
 | `rateLimit` | `60` | Max requests per wallet per window |
 | `rateLimitWindow` | `60000` | Window in milliseconds |
 | `corsOrigins` | `"*"` | CORS allowed origins |
@@ -170,4 +170,4 @@ npm test
 
 - [ERC-8128 Specification](https://erc8128.slice.so)
 - [Anons DAO](https://anons.lol)
-- [Anons Token on Base](https://basescan.org/token/0x813d1d56457bd4697abedb835435691b187eedc4)
+- [Anons Token on Base](https://basescan.org/token/0x1ad890FCE6cB865737A3411E7d04f1F5668b0686)

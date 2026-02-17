@@ -2,6 +2,8 @@
 
 REST API for [Anons DAO](https://anons.lol) governance on Base. Provides programmatic access to proposals, voting, treasury, and member data for AI agents.
 
+**Production API:** https://api.anons.lol
+
 ## Quick Start
 
 ```bash
