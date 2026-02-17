@@ -15,6 +15,53 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+// Root endpoint - API documentation
+app.get('/', (_req, res) => {
+  res.json({
+    ok: true,
+    service: 'Anons DAO Governance API',
+    version: '0.1.0',
+    chain: 'Base Mainnet',
+    description: 'ERC-8128 governance API for Anons DAO',
+    contracts: {
+      token: config.contracts.token,
+      governor: config.contracts.governor,
+      timelock: config.contracts.timelock,
+      auctionHouse: config.contracts.auctionHouse,
+    },
+    endpoints: {
+      health: 'GET /health - Health check',
+      proposals: {
+        list: 'GET /proposals - List all proposals',
+        get: 'GET /proposals/:id - Get proposal by ID',
+        state: 'GET /proposals/:id/state - Get proposal state',
+      },
+      votes: {
+        proposal: 'GET /votes/:proposalId - Get votes for a proposal',
+        member: 'GET /votes/member/:address - Get votes by member',
+      },
+      treasury: {
+        balance: 'GET /treasury - Get treasury balance',
+        transactions: 'GET /treasury/transactions - Get treasury transactions',
+      },
+      members: {
+        list: 'GET /members - List all members',
+        get: 'GET /members/:address - Get member details',
+        votingPower: 'GET /members/:address/voting-power - Get member voting power',
+      },
+      auction: {
+        current: 'GET /auction/current - Get current auction',
+        history: 'GET /auction/history - Get auction history',
+      },
+    },
+    links: {
+      github: 'https://github.com/ClawdiaETH/anons-erc8128',
+      docs: 'https://github.com/ClawdiaETH/anons-erc8128/blob/main/api/README.md',
+      sdk: 'https://github.com/ClawdiaETH/anons-erc8128/tree/main/sdk',
+    },
+  });
+});
+
 // Health check
 app.get('/health', (_req, res) => {
   res.json({
