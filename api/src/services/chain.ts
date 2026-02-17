@@ -223,19 +223,21 @@ export const chainService = {
 
   async getVoteReceipt(proposalId: bigint, voter: Address): Promise<VoteReceipt | null> {
     try {
-      const receipt = await client.readContract({
+      const hasVoted = await client.readContract({
         address: config.contracts.governor,
         abi: GovernorABI,
-        functionName: 'getReceipt',
+        functionName: 'hasVoted',
         args: [proposalId, voter],
       });
-      const [hasVoted, support, votes] = receipt as [boolean, number, bigint];
       if (!hasVoted) return null;
+      
+      // Note: OpenZeppelin Governor doesn't expose individual vote weights/support
+      // Would need to parse VoteCast events to get this data
       return {
         proposalId: proposalId.toString(),
         voter,
-        support,
-        votes: votes.toString(),
+        support: 0, // Unknown without parsing events
+        votes: '0', // Unknown without parsing events
       };
     } catch {
       return null;
