@@ -4,9 +4,9 @@ import { chainService } from '../services/chain.js';
 const router = Router();
 
 /**
- * GET /treasury - Treasury stats
+ * GET /treasury/balance - Treasury stats
  */
-router.get('/', async (_req: Request, res: Response) => {
+router.get('/balance', async (_req: Request, res: Response) => {
   try {
     const stats = await chainService.getTreasuryStats();
     res.json({ ok: true, data: stats });

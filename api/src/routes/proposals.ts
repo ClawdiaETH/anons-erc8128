@@ -1,20 +1,21 @@
 import { Router, type Request, type Response } from 'express';
-import { requireAnon, optionalAuth } from '../middleware/auth.js';
+import createAnonsAuth, { type AuthenticatedRequest } from '../middleware/erc8128.js';
 import { validateBody, validateQuery } from '../middleware/validate.js';
 import { CreateProposalSchema, ListProposalsSchema } from '../types/index.js';
 import { chainService } from '../services/chain.js';
 import { config } from '../config.js';
 
 const router = Router();
+const { auth } = createAnonsAuth();
 
 /**
  * POST /proposals - Submit governance proposal
  * Requires: Anon NFT ownership
  */
-router.post('/', requireAnon(), validateBody(CreateProposalSchema), async (req: Request, res: Response) => {
+router.post('/', auth, validateBody(CreateProposalSchema), async (req: Request, res: Response) => {
   try {
     const { title, description, actions } = req.body;
-    const proposer = req.auth!.agentAddress;
+    const proposer = (req as AuthenticatedRequest).wallet;
 
     // Governor not yet deployed
     if (config.contracts.governor === '0x0000000000000000000000000000000000000000') {
@@ -54,7 +55,7 @@ router.post('/', requireAnon(), validateBody(CreateProposalSchema), async (req: 
  * GET /proposals - List all proposals
  * Query: ?status=active|executed|defeated&page=1&limit=20
  */
-router.get('/', optionalAuth(), validateQuery(ListProposalsSchema), async (req: Request, res: Response) => {
+router.get('/', validateQuery(ListProposalsSchema), async (req: Request, res: Response) => {
   try {
     const { status, page, limit } = req.query as any;
 
@@ -88,7 +89,7 @@ router.get('/', optionalAuth(), validateQuery(ListProposalsSchema), async (req: 
 /**
  * GET /proposals/:id - Get proposal details
  */
-router.get('/:id', optionalAuth(), async (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response) => {
   try {
     const proposalId = BigInt(req.params.id as string);
 
