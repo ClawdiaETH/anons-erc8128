@@ -214,7 +214,20 @@ export const chainService = {
   // ─── Treasury ────────────────────────────────────────────────
 
   async getTreasuryStats(): Promise<TreasuryStats> {
-    const balance = await client.getBalance({ address: config.contracts.timelock });
+    // Check Governor's WETH balance (WETH = 0x4200000000000000000000000000000000000006 on Base)
+    const WETH_ADDRESS = '0x4200000000000000000000000000000000000006' as Address;
+    const balance = await client.readContract({
+      address: WETH_ADDRESS,
+      abi: [{
+        inputs: [{ name: 'owner', type: 'address' }],
+        name: 'balanceOf',
+        outputs: [{ name: '', type: 'uint256' }],
+        stateMutability: 'view',
+        type: 'function',
+      }],
+      functionName: 'balanceOf',
+      args: [config.contracts.governor],
+    });
 
     // Get recent auction settlements as proxy for treasury transactions
     let recentTxs: TreasuryStats['recentTransactions'] = [];
@@ -239,7 +252,7 @@ export const chainService = {
     }
 
     return {
-      address: config.contracts.timelock,
+      address: config.contracts.governor,
       ethBalance: balance.toString(),
       ethBalanceFormatted: formatEther(balance),
       recentTransactions: recentTxs,
