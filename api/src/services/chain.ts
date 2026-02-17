@@ -83,11 +83,14 @@ export const chainService = {
     if (config.contracts.governor === '0x0000000000000000000000000000000000000000') {
       return 0n;
     }
-    return client.readContract({
+    // OpenZeppelin Governor doesn't have proposalCount(), count events instead
+    const logs = await client.getLogs({
       address: config.contracts.governor,
-      abi: GovernorABI,
-      functionName: 'proposalCount',
+      event: GovernorABI.find(e => e.type === 'event' && e.name === 'ProposalCreated') as any,
+      fromBlock: 'earliest',
+      toBlock: 'latest',
     });
+    return BigInt(logs.length);
   },
 
   async getProposalState(proposalId: bigint): Promise<ProposalState> {
@@ -100,16 +103,6 @@ export const chainService = {
   },
 
   async getProposal(proposalId: bigint): Promise<ProposalDetail> {
-    const [rawProposal, state] = await Promise.all([
-      client.readContract({
-        address: config.contracts.governor,
-        abi: GovernorABI,
-        functionName: 'proposals',
-        args: [proposalId],
-      }),
-      this.getProposalState(proposalId),
-    ]);
-
     // Fetch ProposalCreated event for description and actions
     const logs = await client.getLogs({
       address: config.contracts.governor,
@@ -118,12 +111,24 @@ export const chainService = {
       toBlock: 'latest',
     });
 
-    const creationLog = logs.find((log: any) => log.args?.id === proposalId);
-    const description = (creationLog as any)?.args?.description || '';
-    const targets = (creationLog as any)?.args?.targets || [];
-    const values = (creationLog as any)?.args?.values || [];
-    const signatures = (creationLog as any)?.args?.signatures || [];
-    const calldatas = (creationLog as any)?.args?.calldatas || [];
+    const creationLog = logs.find((log: any) => {
+      const id = (log as any).args?.proposalId || (log as any).args?.id;
+      return id?.toString() === proposalId.toString();
+    });
+    
+    if (!creationLog) {
+      throw new Error(`Proposal ${proposalId} not found`);
+    }
+
+    const args = (creationLog as any).args;
+    const description = args?.description || '';
+    const targets = args?.targets || [];
+    const values = args?.values || [];
+    const signatures = args?.signatures || [];
+    const calldatas = args?.calldatas || [];
+    const proposer = args?.proposer || '0x0000000000000000000000000000000000000000';
+    const startBlock = args?.voteStart || args?.startBlock || 0n;
+    const endBlock = args?.voteEnd || args?.endBlock || 0n;
 
     // Parse title from description (first line)
     const title = description.split('\n')[0]?.replace(/^#\s*/, '') || `Proposal ${proposalId}`;
@@ -135,22 +140,33 @@ export const chainService = {
       calldata: calldatas[i] || '0x',
     }));
 
-    const [id, proposer, eta, startBlock, endBlock, forVotes, againstVotes, abstainVotes, canceled, executed] = rawProposal as any;
+    // Get current state and vote counts
+    const [state, proposalVotes] = await Promise.all([
+      this.getProposalState(proposalId),
+      client.readContract({
+        address: config.contracts.governor,
+        abi: GovernorABI,
+        functionName: 'proposalVotes',
+        args: [proposalId],
+      }).catch(() => [0n, 0n, 0n]),
+    ]);
+
+    const [againstVotes, forVotes, abstainVotes] = proposalVotes as [bigint, bigint, bigint];
 
     return {
-      id: id.toString(),
+      id: proposalId.toString(),
       proposer,
       title,
       description,
       status: ProposalStateLabel[state] || 'unknown',
-      eta: eta.toString(),
+      eta: '0', // TODO: fetch proposalEta
       startBlock: startBlock.toString(),
       endBlock: endBlock.toString(),
       forVotes: forVotes.toString(),
       againstVotes: againstVotes.toString(),
       abstainVotes: abstainVotes.toString(),
-      canceled,
-      executed,
+      canceled: state === ProposalState.Canceled,
+      executed: state === ProposalState.Executed,
       actions,
       quorum: '0', // TODO: fetch from governor
       totalVotes: (forVotes + againstVotes + abstainVotes).toString(),
@@ -158,13 +174,28 @@ export const chainService = {
   },
 
   async listProposals(status: string, page: number, limit: number): Promise<{ proposals: ProposalSummary[]; total: number }> {
-    const count = await this.getProposalCount();
-    if (count === 0n) return { proposals: [], total: 0 };
+    if (config.contracts.governor === '0x0000000000000000000000000000000000000000') {
+      return { proposals: [], total: 0 };
+    }
+
+    // Fetch all ProposalCreated events
+    const logs = await client.getLogs({
+      address: config.contracts.governor,
+      event: GovernorABI.find(e => e.type === 'event' && e.name === 'ProposalCreated') as any,
+      fromBlock: 'earliest',
+      toBlock: 'latest',
+    });
+
+    if (logs.length === 0) return { proposals: [], total: 0 };
 
     const all: ProposalSummary[] = [];
-    for (let i = 1n; i <= count; i++) {
+    
+    for (const log of logs) {
       try {
-        const proposal = await this.getProposal(i);
+        const proposalId = (log as any).args?.proposalId || (log as any).args?.id;
+        if (!proposalId) continue;
+        
+        const proposal = await this.getProposal(proposalId);
         if (status === 'all' || proposal.status === status) {
           all.push({
             id: proposal.id,
