@@ -15,49 +15,47 @@ export const AnonsTokenABI = [
   { type: 'event', name: 'DelegateChanged', inputs: [{ name: 'delegator', type: 'address', indexed: true }, { name: 'fromDelegate', type: 'address', indexed: true }, { name: 'toDelegate', type: 'address', indexed: true }] },
 ] as const;
 
-// Nouns-style Governor
+// OpenZeppelin Governor (AnonsDAO)
 export const GovernorABI = [
-  { type: 'function', name: 'proposalCount', inputs: [], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
   { type: 'function', name: 'proposalThreshold', inputs: [], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
   { type: 'function', name: 'votingDelay', inputs: [], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
   { type: 'function', name: 'votingPeriod', inputs: [], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
-  { type: 'function', name: 'quorumVotes', inputs: [], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
+  { type: 'function', name: 'quorum', inputs: [{ name: 'timepoint', type: 'uint256' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
   { type: 'function', name: 'state', inputs: [{ name: 'proposalId', type: 'uint256' }], outputs: [{ type: 'uint8' }], stateMutability: 'view' },
-  { type: 'function', name: 'proposals', inputs: [{ name: 'proposalId', type: 'uint256' }], outputs: [
-    { name: 'id', type: 'uint256' },
-    { name: 'proposer', type: 'address' },
-    { name: 'eta', type: 'uint256' },
-    { name: 'startBlock', type: 'uint256' },
-    { name: 'endBlock', type: 'uint256' },
-    { name: 'forVotes', type: 'uint256' },
+  { type: 'function', name: 'proposalVotes', inputs: [{ name: 'proposalId', type: 'uint256' }], outputs: [
     { name: 'againstVotes', type: 'uint256' },
+    { name: 'forVotes', type: 'uint256' },
     { name: 'abstainVotes', type: 'uint256' },
-    { name: 'canceled', type: 'bool' },
-    { name: 'executed', type: 'bool' },
   ], stateMutability: 'view' },
-  { type: 'function', name: 'getReceipt', inputs: [{ name: 'proposalId', type: 'uint256' }, { name: 'voter', type: 'address' }], outputs: [
-    { name: 'hasVoted', type: 'bool' },
-    { name: 'support', type: 'uint8' },
-    { name: 'votes', type: 'uint96' },
-  ], stateMutability: 'view' },
+  { type: 'function', name: 'proposalSnapshot', inputs: [{ name: 'proposalId', type: 'uint256' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
+  { type: 'function', name: 'proposalDeadline', inputs: [{ name: 'proposalId', type: 'uint256' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
+  { type: 'function', name: 'proposalProposer', inputs: [{ name: 'proposalId', type: 'uint256' }], outputs: [{ type: 'address' }], stateMutability: 'view' },
+  { type: 'function', name: 'proposalEta', inputs: [{ name: 'proposalId', type: 'uint256' }], outputs: [{ type: 'uint256' }], stateMutability: 'view' },
+  { type: 'function', name: 'hasVoted', inputs: [{ name: 'proposalId', type: 'uint256' }, { name: 'account', type: 'address' }], outputs: [{ type: 'bool' }], stateMutability: 'view' },
   // Events
   { type: 'event', name: 'ProposalCreated', inputs: [
-    { name: 'id', type: 'uint256', indexed: false },
+    { name: 'proposalId', type: 'uint256', indexed: false },
     { name: 'proposer', type: 'address', indexed: false },
     { name: 'targets', type: 'address[]', indexed: false },
     { name: 'values', type: 'uint256[]', indexed: false },
     { name: 'signatures', type: 'string[]', indexed: false },
     { name: 'calldatas', type: 'bytes[]', indexed: false },
-    { name: 'startBlock', type: 'uint256', indexed: false },
-    { name: 'endBlock', type: 'uint256', indexed: false },
+    { name: 'voteStart', type: 'uint256', indexed: false },
+    { name: 'voteEnd', type: 'uint256', indexed: false },
     { name: 'description', type: 'string', indexed: false },
   ]},
   { type: 'event', name: 'VoteCast', inputs: [
     { name: 'voter', type: 'address', indexed: true },
     { name: 'proposalId', type: 'uint256', indexed: false },
     { name: 'support', type: 'uint8', indexed: false },
-    { name: 'votes', type: 'uint256', indexed: false },
+    { name: 'weight', type: 'uint256', indexed: false },
     { name: 'reason', type: 'string', indexed: false },
+  ]},
+  { type: 'event', name: 'VoteCastWithAgent', inputs: [
+    { name: 'voter', type: 'address', indexed: true },
+    { name: 'proposalId', type: 'uint256', indexed: true },
+    { name: 'support', type: 'uint8', indexed: false },
+    { name: 'weight', type: 'uint256', indexed: false },
   ]},
 ] as const;
 
