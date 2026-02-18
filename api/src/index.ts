@@ -7,6 +7,8 @@ import votesRouter from './routes/votes.js';
 import treasuryRouter from './routes/treasury.js';
 import membersRouter from './routes/members.js';
 import auctionRouter from './routes/auction.js';
+import authRouter from './routes/auth.js';
+import proposalsSimpleRouter from './routes/proposals-simple.js';
 
 const app = express();
 
@@ -80,7 +82,9 @@ app.get('/health', (_req, res) => {
 });
 
 // Routes
-app.use('/proposals', proposalsRouter);
+app.use('/auth', authRouter);
+app.use('/proposals', proposalsSimpleRouter); // Simple JWT auth
+app.use('/proposals-erc8128', proposalsRouter); // Full ERC-8128 (advanced)
 app.use('/votes', votesRouter);
 app.use('/treasury', treasuryRouter);
 app.use('/members', membersRouter);

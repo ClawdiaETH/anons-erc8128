@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@slicekit/erc8128": "^0.1.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "cors": "^2.8.5",
     "express": "^5.0.1",
     "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.3",
     "viem": "^2.23.0",
     "zod": "^3.24.0"
   },
