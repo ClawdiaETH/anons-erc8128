@@ -84,10 +84,11 @@ export const chainService = {
       return 0n;
     }
     // OpenZeppelin Governor doesn't have proposalCount(), count events instead
+    // Governor deployed at block 41930174 on Base (2026-02-09)
     const logs = await client.getLogs({
       address: config.contracts.governor,
       event: GovernorABI.find(e => e.type === 'event' && e.name === 'ProposalCreated') as any,
-      fromBlock: 'earliest',
+      fromBlock: 41930174n,
       toBlock: 'latest',
     });
     return BigInt(logs.length);
@@ -107,7 +108,7 @@ export const chainService = {
     const logs = await client.getLogs({
       address: config.contracts.governor,
       event: GovernorABI.find(e => e.type === 'event' && e.name === 'ProposalCreated') as any,
-      fromBlock: 'earliest',
+      fromBlock: 41930174n,
       toBlock: 'latest',
     });
 
@@ -182,7 +183,7 @@ export const chainService = {
     const logs = await client.getLogs({
       address: config.contracts.governor,
       event: GovernorABI.find(e => e.type === 'event' && e.name === 'ProposalCreated') as any,
-      fromBlock: 'earliest',
+      fromBlock: 41930174n,
       toBlock: 'latest',
     });
 
@@ -312,7 +313,7 @@ export const chainService = {
           address: config.contracts.governor,
           event: GovernorABI.find(e => e.type === 'event' && e.name === 'VoteCast') as any,
           args: { voter: address },
-          fromBlock: 'earliest',
+          fromBlock: 41930174n,
           toBlock: 'latest',
         });
 
@@ -327,7 +328,7 @@ export const chainService = {
         const proposalLogs = await client.getLogs({
           address: config.contracts.governor,
           event: GovernorABI.find(e => e.type === 'event' && e.name === 'ProposalCreated') as any,
-          fromBlock: 'earliest',
+          fromBlock: 41930174n,
           toBlock: 'latest',
         });
 
