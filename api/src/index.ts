@@ -33,14 +33,21 @@ app.get('/', (_req, res) => {
     },
     endpoints: {
       health: 'GET /health - Health check',
+      auth: {
+        nonce: 'POST /auth/nonce - Request SIWA nonce (requires address + agentId)',
+        verify: 'POST /auth/verify - Verify SIWA signature, returns JWT',
+        session: 'GET /auth/session - Validate existing JWT (requires Bearer token)',
+        legacy: 'POST /auth/legacy - Plain Ethereum signature auth (dev/backward compat)',
+      },
       proposals: {
         list: 'GET /proposals - List all proposals',
         get: 'GET /proposals/:id - Get proposal by ID',
         state: 'GET /proposals/:id/state - Get proposal state',
+        create: 'POST /proposals/create - Create proposal (SIWA JWT + holder required)',
       },
       votes: {
-        proposal: 'GET /votes/:proposalId - Get votes for a proposal',
-        member: 'GET /votes/member/:address - Get votes by member',
+        cast: 'POST /votes/:proposalId - Cast vote (SIWA JWT + member required)',
+        proposal: 'GET /votes/:proposalId/:voter - Get vote receipt',
       },
       treasury: {
         balance: 'GET /treasury - Get treasury balance',

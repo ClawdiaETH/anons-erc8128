@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from 'express';
-import { requireAuth } from './auth.js';
+import { requireAuth, requireHolder } from './auth.js';
 import { validateBody } from '../middleware/validate.js';
 import { z } from 'zod';
 import { encodeFunctionData } from 'viem';
@@ -20,10 +20,10 @@ const CreateProposalSchema = z.object({
  * POST /proposals/create - Create proposal with simple JWT auth
  * Returns calldata for onchain submission
  */
-router.post('/create', requireAuth, validateBody(CreateProposalSchema), async (req: Request, res: Response) => {
+router.post('/create', requireAuth, requireHolder, validateBody(CreateProposalSchema), async (req: Request, res: Response) => {
   try {
     const { title, description, actions } = req.body;
-    const { address, agentId } = (req as any).auth;
+    const { address, agentId } = (req as any).session;
 
     // Format proposal
     const fullDescription = `${title}\n\n${description}`;

@@ -102,8 +102,8 @@ router.get('/:id', async (req: Request, res: Response) => {
 
     // If requester is authenticated, include their vote
     let myVote = null;
-    if (req.auth) {
-      myVote = await chainService.getVoteReceipt(proposalId, req.auth.agentAddress);
+    if ((req as any).session) {
+      myVote = await chainService.getVoteReceipt(proposalId, (req as any).session?.address);
     }
 
     res.json({

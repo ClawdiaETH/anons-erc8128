@@ -1,5 +1,5 @@
 import { Router, type Request, type Response } from 'express';
-import { requireAnon } from '../middleware/auth.js';
+import { requireAuth, requireMember } from '../middleware/auth.js';
 import { validateBody } from '../middleware/validate.js';
 import { CastVoteSchema } from '../types/index.js';
 import { chainService } from '../services/chain.js';
@@ -11,11 +11,11 @@ const router = Router();
  * POST /votes/:proposalId - Cast vote
  * Requires: Anon NFT ownership
  */
-router.post('/:proposalId', requireAnon(), validateBody(CastVoteSchema), async (req: Request, res: Response) => {
+router.post('/:proposalId', requireAuth, requireMember, validateBody(CastVoteSchema), async (req: Request, res: Response) => {
   try {
     const proposalId = BigInt(req.params.proposalId as string);
     const { support, reason } = req.body;
-    const voter = req.auth!.agentAddress;
+    const voter = (req as any).session.address;
 
     if (config.contracts.governor === '0x0000000000000000000000000000000000000000') {
       res.status(503).json({
