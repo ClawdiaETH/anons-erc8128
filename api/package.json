@@ -10,7 +10,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@buildersgarden/siwa": "^0.0.21",
     "@slicekit/erc8128": "^0.1.0",
     "@types/jsonwebtoken": "^9.0.10",
     "cors": "^2.8.5",
